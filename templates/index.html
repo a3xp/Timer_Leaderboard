@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Timer Classifica</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+            color: white;
+            overflow-x: hidden;
+            background:
+                linear-gradient(135deg, #12001f, #25003b, #001d3d, #1b0033);
+            position: relative;
+        }
+
+        /* Sfondo psichedelico animato */
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.55;
+            z-index: 0;
+            animation: floatBlob 16s ease-in-out infinite alternate;
+        }
+
+        body::before {
+            background: radial-gradient(circle, #ff00c8, #ff6a00, transparent 70%);
+            top: -120px;
+            left: -120px;
+        }
+
+        body::after {
+            background: radial-gradient(circle, #00ffe5, #6a00ff, transparent 70%);
+            bottom: -150px;
+            right: -120px;
+            animation-duration: 20s;
+        }
+
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(70px);
+            opacity: 0.35;
+            z-index: 0;
+            animation: floatBlob 18s ease-in-out infinite alternate;
+        }
+
+        .orb1 {
+            width: 300px;
+            height: 300px;
+            background: #00ff99;
+            top: 15%;
+            right: 12%;
+        }
+
+        .orb2 {
+            width: 260px;
+            height: 260px;
+            background: #ff00ff;
+            bottom: 10%;
+            left: 10%;
+            animation-duration: 22s;
+        }
+
+        .orb3 {
+            width: 220px;
+            height: 220px;
+            background: #00bfff;
+            top: 45%;
+            left: 50%;
+            animation-duration: 14s;
+        }
+
+        @keyframes floatBlob {
+            0% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            50% {
+                transform: translate(40px, -30px) scale(1.1) rotate(60deg);
+            }
+            100% {
+                transform: translate(-30px, 35px) scale(0.95) rotate(120deg);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 28px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            text-align: center;
+        }
+
+        h1, h2 {
+            margin-top: 0;
+        }
+
+        h1 {
+            font-size: 38px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 20px rgba(255,255,255,0.25);
+        }
+
+        input {
+            width: min(100%, 500px);
+            padding: 14px 16px;
+            margin-bottom: 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+            font-size: 17px;
+            outline: none;
+            transition: 0.2s ease;
+        }
+
+        input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        input:focus {
+            border-color: rgba(255,255,255,0.6);
+            box-shadow: 0 0 0 4px rgba(255,255,255,0.08);
+        }
+
+        .button-row {
+            margin-top: 8px;
+            margin-bottom: 16px;
+        }
+
+        button {
+            border: none;
+            border-radius: 14px;
+            padding: 14px 24px;
+            margin: 8px;
+            font-size: 17px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.28);
+        }
+
+        button:hover {
+            transform: translateY(-2px) scale(1.03);
+            opacity: 0.96;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .enter-btn {
+            background: linear-gradient(135deg, #3a86ff, #8338ec);
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #00c853, #64dd17);
+        }
+
+        .stop-btn {
+            background: linear-gradient(135deg, #ff1744, #ff6d00);
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #7b2ff7, #f107a3);
+        }
+
+        #message {
+            min-height: 24px;
+            margin: 14px 0 10px;
+            font-weight: bold;
+            color: #ffe082;
+        }
+
+        #current-user,
+        #current-timer {
+            margin: 10px 0;
+            color: #f5f5f5;
+        }
+
+        #my-time {
+            font-size: 58px;
+            font-weight: bold;
+            margin: 22px 0;
+            text-shadow: 0 0 18px rgba(255,255,255,0.25);
+        }
+
+        table {
+            width: 100%;
+            margin-top: 24px;
+            border-collapse: collapse;
+            overflow: hidden;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.06);
+        }
+
+        th, td {
+            padding: 14px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.10);
+            text-align: center;
+        }
+
+        th {
+            background: rgba(255,255,255,0.10);
+            font-size: 15px;
+        }
+
+        tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .running {
+            font-weight: bold;
+            background: rgba(0, 255, 170, 0.08);
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 20px;
+            }
+
+            #my-time {
+                font-size: 42px;
+            }
+
+            button {
+                width: calc(50% - 16px);
+                min-width: 130px;
+            }
+
+            th, td {
+                font-size: 13px;
+                padding: 10px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-orb orb1"></div>
+    <div class="bg-orb orb2"></div>
+    <div class="bg-orb orb3"></div>
+
+    <div class="container">
+        <h1>⏱ Timer Classifica</h1>
+
+        <input id="nickname" placeholder="Inserisci nickname">
+        <br>
+        <button class="enter-btn" onclick="register()">Entra</button>
+
+        <h2 id="current-user">Nessun utente selezionato</h2>
+
+        <input id="timer-name" placeholder="Nome timer, es. Cucina">
+
+        <div id="message"></div>
+
+        <div id="current-timer">Nessun timer attivo</div>
+
+        <div id="my-time">00:00:00</div>
+
+        <div class="button-row">
+            <button class="start-btn" onclick="startTimer()">START</button>
+            <button class="stop-btn" onclick="stopTimer()">STOP</button>
+            <button class="reset-btn" onclick="resetTimer()">RESET</button>
+        </div>
+
+        <h2>Classifica</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Posizione</th>
+                    <th>Nickname</th>
+                    <th>Tempo totale</th>
+                    <th>Stato</th>
+                    <th>Timer</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard"></tbody>
+        </table>
+    </div>
+
+    <script>
+        let nickname = localStorage.getItem("nickname") || "";
+
+        const nicknameInput = document.getElementById("nickname");
+        const currentUser = document.getElementById("current-user");
+        const messageBox = document.getElementById("message");
+
+        if (nickname) {
+            nicknameInput.value = nickname;
+            currentUser.innerText = "Utente: " + nickname;
+        }
+
+        function showMessage(text) {
+            messageBox.innerText = text;
+        }
+
+        function formatTime(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+
+            return String(h).padStart(2, "0") + ":" +
+                   String(m).padStart(2, "0") + ":" +
+                   String(s).padStart(2, "0");
+        }
+
+        async function register() {
+            nickname = nicknameInput.value.trim();
+
+            if (!nickname) {
+                showMessage("Inserisci un nickname.");
+                return;
+            }
+
+            const response = await fetch("/api/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ nickname: nickname })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showMessage(data.error || "Errore durante la registrazione.");
+                return;
+            }
+
+            localStorage.setItem("nickname", nickname);
+            currentUser.innerText = "Utente: " + nickname;
+            showMessage("Utente registrato: " + nickname);
+
+            updateLeaderboard();
+        }
+
+        async function startTimer() {
+            if (!nickname) {
+                showMessage("Prima inserisci un nickname e premi Entra.");
+                return;
+            }
+
+            const timerName = document.getElementById("timer-name").value.trim();
+
+            if (!timerName) {
+                showMessage("Inserisci il nome del timer, es. Cucina.");
+                return;
+            }
+
+            const response = await fetch("/api/start", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    nickname: nickname,
+                    timer_name: timerName
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showMessage(data.error || "Errore durante l'avvio del timer.");
+                return;
+            }
+
+            showMessage(data.message + ": " + timerName);
+            updateLeaderboard();
+        }
+
+        async function stopTimer() {
+            if (!nickname) {
+                showMessage("Prima inserisci un nickname e premi Entra.");
+                return;
+            }
+
+            const response = await fetch("/api/stop", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ nickname: nickname })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showMessage(data.error || "Errore durante lo stop.");
+                return;
+            }
+
+            showMessage(data.message);
+            updateLeaderboard();
+        }
+
+        async function resetTimer() {
+            if (!nickname) {
+                showMessage("Prima inserisci un nickname e premi Entra.");
+                return;
+            }
+
+            const confirmReset = confirm("Vuoi davvero azzerare il tuo tempo?");
+            if (!confirmReset) return;
+
+            const response = await fetch("/api/reset", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ nickname: nickname })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showMessage(data.error || "Errore durante il reset.");
+                return;
+            }
+
+            showMessage(data.message);
+            updateLeaderboard();
+        }
+
+        async function updateLeaderboard() {
+            const response = await fetch("/api/leaderboard");
+            const users = await response.json();
+
+            const tbody = document.getElementById("leaderboard");
+            tbody.innerHTML = "";
+
+            let myUserFound = false;
+
+            users.forEach((user, index) => {
+                const row = document.createElement("tr");
+
+                if (user.running) {
+                    row.classList.add("running");
+                }
+
+                let timerText = "-";
+
+                if (user.running && user.current_timer_name) {
+                    timerText = user.current_timer_name;
+                } else if (!user.running && user.last_timer_name) {
+                    timerText = "Ultimo: " + user.last_timer_name;
+                }
+
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${user.nickname}</td>
+                    <td>${formatTime(user.total_seconds)}</td>
+                    <td>${user.running ? "Attivo" : "Fermo"}</td>
+                    <td>${timerText}</td>
+                `;
+
+                tbody.appendChild(row);
+
+                if (user.nickname === nickname) {
+                    myUserFound = true;
+
+                    document.getElementById("my-time").innerText = formatTime(user.total_seconds);
+
+                    if (user.running && user.current_timer_name) {
+                        document.getElementById("current-timer").innerText =
+                            "Timer attivo: " + user.current_timer_name;
+                    } else if (user.last_timer_name) {
+                        document.getElementById("current-timer").innerText =
+                            "Ultimo timer: " + user.last_timer_name;
+                    } else {
+                        document.getElementById("current-timer").innerText =
+                            "Nessun timer attivo";
+                    }
+                }
+            });
+
+            if (!myUserFound) {
+                document.getElementById("my-time").innerText = "00:00:00";
+                document.getElementById("current-timer").innerText = "Nessun timer attivo";
+            }
+        }
+
+        setInterval(updateLeaderboard, 1000);
+        updateLeaderboard();
+    </script>
+
+</body>
+</html>
